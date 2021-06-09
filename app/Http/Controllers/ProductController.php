@@ -7,6 +7,7 @@ use App\Models\ProductVariant;
 use App\Models\ProductVariantPrice;
 use App\Models\Variant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class ProductController extends Controller
 {
@@ -17,7 +18,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('products.index');
+        $products = Product::paginate(2);
+        $variants = Variant::all();
+        return view('products.index',\compact('products','variants'));
     }
 
     /**
@@ -39,6 +42,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+
+        return $request;
 
     }
 
@@ -87,5 +92,15 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         //
+    }
+
+    public function search(Request $req)
+    {
+        $sq=$req->title;
+        $p = Product::all();
+        //$products = Product::where([['title','LIKE',"%$sq%"]])->whereDate('created_at', '>=', $req->date.' 00:00:00')->varient_prices[0]->whereBetween('price',[$req->price_from,$req->price_to])->paginate(2);
+        $products = Product::where([['title','LIKE',"%$sq%"]])->whereDate('created_at', '>=', $req->date.' 00:00:00')->paginate(2);
+        $variants = Variant::all();
+        return view('products.search',\compact('products','variants'));
     }
 }
